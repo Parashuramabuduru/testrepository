@@ -1,0 +1,36 @@
+#include <cmath>
+#include <vector>
+
+using namespace std;
+
+vector<int> findBestCoordinate(vector<vector<int>>& towers, int radius) {
+    // Find the bounding box of all the towers
+    int minX = INT_MAX, minY = INT_MAX, maxX = INT_MIN, maxY = INT_MIN;
+    for (auto tower : towers) {
+        minX = min(minX, tower[0]);
+        minY = min(minY, tower[1]);
+        maxX = max(maxX, tower[0]);
+        maxY = max(maxY, tower[1]);
+    }
+    // Find the coordinate with maximum network quality
+    int maxQuality = 0;
+    vector<int> bestCoordinate = {0, 0};
+    for (int x = minX; x <= maxX; x++) {
+        for (int y = minY; y <= maxY; y++) {
+            int quality = 0;
+            for (auto tower : towers) {
+                int dx = x - tower[0];
+                int dy = y - tower[1];
+                double distance = sqrt(dx*dx + dy*dy);
+                if (distance <= radius) {
+                    quality += floor(tower[2] / (1 + distance));
+                }
+            }
+            if (quality > maxQuality) {
+                maxQuality = quality;
+                bestCoordinate = {x, y};
+            }
+        }
+    }
+    return bestCoordinate;
+}
